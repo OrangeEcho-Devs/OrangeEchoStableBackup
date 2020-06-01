@@ -1,6 +1,5 @@
 //const token = 'nope'
 console.log('The bot is currently booting up. Please wait a moment.')
-client.on('debug', console.log);
 fs = require('fs');
 Discord = require('discord.js');
 const client = new Discord.Client();
@@ -29,6 +28,7 @@ codename = 'Stable'
 footertext = 'Version '+ version +'\nCodename: '+ codename
 errorcount = 0
 var safemode = false
+client.on('debug', console.log);
 
 if (!fs.existsSync('./restrictions.json'))console.log('restrictions.json is missing.')
 
