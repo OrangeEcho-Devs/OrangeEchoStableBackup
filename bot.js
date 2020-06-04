@@ -7,7 +7,7 @@ client.commands = new Discord.Collection();
 client.modcommands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 const {
-	PREFIX = '*',
+	PREFIX = '@',
 	BotManagerRoleID,
 	ModeratorRoleID,
 	OwnerID,
@@ -25,10 +25,9 @@ const {
 
 version = '5.1.1'
 codename = 'Stable'
-footertext = 'Version '+ version +'\nCodename: '+ codename
+footertext = 'botOS '+ version +'\nCodename: '+ codename
 errorcount = 0
 var safemode = false
-client.on('debug', console.log);
 
 if (!fs.existsSync('./restrictions.json'))console.log('restrictions.json is missing.')
 
@@ -56,7 +55,9 @@ fs.readFile('./errorcount.txt', function(err, data){
 
 //Bot ready
 client.once('ready', () => {
-	console.log('Version '+version)
+	client.user.setPresence({ activity: { name: 'with the members of OrangeEcho' }, type: 'WATCHING', status: 'idle' })
+	.catch(console.error);
+	console.log('botOS '+version)
 	console.log('Codename '+codename)
 	console.log('The bot has booted up successfully.');
 	if (fs.existsSync(`./errorcount.txt`)){
@@ -91,13 +92,8 @@ client.once('ready', () => {
 		else{
 		  client.emit('StartupPassed')
 		}
-		if (fs.existsSync(`./statusmessage.config`)){
-			fs.readFile('./statusmessage.config', function(err, data){
-				client.user.setActivity("the members of OrangeEcho", { type: 'WATCHING' });
-				if(err){errorlog(err)}
-			})
-
-		}
+	})
+			
 
 //Checks for shutdown flag
 if (fs.existsSync(`./shutdown.flag`)){
@@ -331,6 +327,32 @@ client.on('message', async message => {
 			respond('🛑 Incorrect permissions',`<@${message.author.id}>, you don't seem to have the correct permissions to use this command or you can't run this command in this channel. Please try again later.`, message.channel)
 			return;
 	}
+	//AI Modules
+client.on('message', message => {
+	if (fs.existsSync('./aiModule.js' && !fs.existsSync('./safe_mode.flag'))){
+		const aiModule = require('./aiModule.js')
+	}
+	if(!safemode == true)
+	if (fs.existsSync('./aiModule.js'))
+
+	function returnFunction(result){
+		message.channel.send(result)
+	}
+
+	function returnFunctionRandomizer(result){
+		message.channel.send(result)
+	}
+
+	if(message.content.startsWith(`<@${client.user.id}>`) && !message.author.bot){
+		const aiModule = require('./aiModule.js')
+		const text = message.content.slice(`<@${client.user.id}>`.length+1).toLowerCase()
+		aiModule.execute(text, message.author, returnFunction)
+	}else if(message.content.startsWith(`<@!${client.user.id}>`) && !message.author.bot){
+		const aiModule = require('./aiModule.js')
+		const text = message.content.slice(`<@!${client.user.id}>`.length+1).toLowerCase()
+		aiModule.execute(text, message.author, returnFunction)
+	}
+})
 	//Channel not allowed
 		if (channelRestrictions[command.name] && !channelRestrictions[command.name].includes(message.channel.id)) {
 			respond('🛑 Incorrect permissions',`<@${message.author.id}>, you don't seem to have the correct permissions to use this command or you can't run this command in this channel. Please try again later.`, message.channel)
@@ -771,4 +793,4 @@ function clean(text) {
 	  }}})
 //Login
 client.login(process.env.token);
-})
+
